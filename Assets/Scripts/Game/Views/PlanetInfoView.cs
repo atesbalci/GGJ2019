@@ -13,7 +13,7 @@ namespace Game.Views
 {
     public class PlanetInfoView : MonoBehaviour
     {
-        private const float YPixelOffset = 200f;
+        private static readonly Vector2 PixelOffset = new Vector2(5f, 5f);
         
         public PlanetView CurrentPlanet { get; private set; }
 
@@ -50,6 +50,7 @@ namespace Game.Views
             }
             _subscriptions.DisposeAndClear();
             _subscriptions.Add(CurrentPlanet.PlanetBehaviour.Planet.LifeSupport.Subscribe(f => RefreshContent()));
+            _subscriptions.Add(CurrentPlanet.PlanetBehaviour.Planet.Fuel.Subscribe(f => RefreshContent()));
             RefreshContent();
             RefreshPosition();
             gameObject.SetActive(true);
@@ -66,6 +67,7 @@ namespace Game.Views
             var planet = CurrentPlanet.PlanetBehaviour.Planet;
             var builder = new StringBuilder();
             builder.AppendLine("Resources: " + planet.LifeSupport.Value.ToString("n0"));
+            builder.AppendLine("Fuel: " + planet.Fuel.Value.ToString("n0"));
             _content.text = builder.ToString();
         }
 
@@ -73,10 +75,13 @@ namespace Game.Views
         {
             if (CurrentPlanet)
             {
-                Vector2 viewportPos = _camera.WorldToViewportPoint(CurrentPlanet.transform.position);
+                var viewportPos = (Vector2) _camera.WorldToViewportPoint(CurrentPlanet.transform.position) +
+                                      Mathf.Abs(_camera.WorldToViewportPoint(Vector3.zero).x - _camera
+                                           .WorldToViewportPoint(
+                                               CurrentPlanet.PlanetBehaviour.Planet.Radius * Vector3.right).x) *
+                                      Vector2.one;
                 var canvasSize = _canvas.sizeDelta;
-                RectTransform.anchoredPosition =
-                    new Vector2(viewportPos.x * canvasSize.x, viewportPos.y * canvasSize.y + YPixelOffset);
+                RectTransform.anchoredPosition = new Vector2(viewportPos.x * canvasSize.x, viewportPos.y * canvasSize.y);
             }
         }
     }
