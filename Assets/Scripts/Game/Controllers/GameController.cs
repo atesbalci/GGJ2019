@@ -10,22 +10,25 @@ namespace Game.Controllers
     {
         private SolarSystemBehaviour _solarSystemBehaviour;
         private SolarSystem _solarSystem;
-        private PlanetBehaviour.Factory _planetFactory;
 
         [Inject]
         public void Initialize(
             SolarSystemBehaviour solarSystemBehaviour,
-            SolarSystem solarSystem,
-            PlanetBehaviour.Factory planetFactory)
+            SolarSystem solarSystem)
         {
             _solarSystemBehaviour = solarSystemBehaviour;
             _solarSystem = solarSystem;
-            _planetFactory = planetFactory;
+            StartGame();
+        }
+
+        private void StartGame()
+        {
+            _solarSystem.InitializeOrbits();
+            _solarSystemBehaviour.ClearPlanets();
             for (int i = 0; i < 3; i++)
             {
-                var planetBehaviour = _planetFactory.Create();
-                planetBehaviour.Bind(new Planet(_solarSystem.Orbits.RandomElementRemove()));
-                _solarSystemBehaviour.AddPlanet(planetBehaviour);
+                var planet = new Planet(_solarSystem.Orbits.RandomElementRemove());
+                _solarSystemBehaviour.AddPlanet(planet);
             }
         }
     }

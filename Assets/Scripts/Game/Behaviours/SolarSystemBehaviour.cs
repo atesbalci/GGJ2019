@@ -8,12 +8,14 @@ namespace Game.Behaviours
     public class SolarSystemBehaviour : MonoBehaviour
     {
         private SolarSystem _solarSystem;
-        private ICollection<PlanetBehaviour> _planets; 
+        private PlanetBehaviour.Pool _planetPool;
+        private ICollection<PlanetBehaviour> _planets;
 
         [Inject]
-        public void Initialize(SolarSystem solarSystem)
+        public void Initialize(SolarSystem solarSystem, PlanetBehaviour.Pool planetPool)
         {
             _solarSystem = solarSystem;
+            _planetPool = planetPool;
             _planets = new LinkedList<PlanetBehaviour>();
         }
 
@@ -30,9 +32,22 @@ namespace Game.Behaviours
             }
         }
 
-        public void AddPlanet(PlanetBehaviour planetBehaviour)
+        public void AddPlanet(Planet planet)
         {
+            var planetBehaviour = _planetPool.Spawn();
+            planetBehaviour.Bind(planet);
             _planets.Add(planetBehaviour);
+            _solarSystem.Planets.Add(planet);
+        }
+
+        public void ClearPlanets()
+        {
+            foreach (var planet in _planets)
+            {
+                _planetPool.Despawn(planet);
+            }
+            _solarSystem.Planets.Clear();
+            _planets.Clear();
         }
     }
 }

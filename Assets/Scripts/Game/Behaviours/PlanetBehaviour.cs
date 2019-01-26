@@ -20,7 +20,6 @@ namespace Game.Behaviours
             transform.localScale = Planet.Radius * Vector3.one;
         }
 
-        
-        public class Factory : PlaceholderFactory<PlanetBehaviour> { }
-    }
+
+        public class Pool : MonoMemoryPool<PlanetBehaviour> { }    }
 }
