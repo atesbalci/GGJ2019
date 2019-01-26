@@ -1,4 +1,5 @@
 using Game.Models;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -12,17 +13,24 @@ namespace Game.Behaviours
         public void Bind(Planet planet)
         {
             Planet = planet;
-            Planet.Radius = Random.Range(0.5f, 3f); //test purpose
-            Planet.LifeSupport = Planet.Radius * LifeSupportCoeff;
+            SetPlanet();
             SetView();
+        }
+
+        private void SetPlanet()
+        {
+            Planet.Radius = Random.Range(0.5f, 3f); //test purpose
+            Planet.LifeSupport = new FloatReactiveProperty(Planet.Radius * LifeSupportCoeff);
+
+
         }
 
         public float Harvest(float flow)
         {
-            var amount = Mathf.Clamp(Planet.LifeSupport, 0f, flow);
+            var amount = Mathf.Clamp(Planet.LifeSupport.Value, 0f, flow);
             if (amount > 0f)
             {
-                Planet.LifeSupport -= amount * Time.deltaTime;
+                Planet.LifeSupport.Value -= amount * Time.deltaTime;
             }
 
             return amount;

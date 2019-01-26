@@ -39,15 +39,15 @@ namespace Game.Models
             {
                 case ShipState.Idle:
                     HarvestLifeSupport(5f);
-                    ConsumeLifeSupport(Ship.LifeSupportFlow / 2f);
+                    ConsumeLifeSupport(Ship.LifeSupportFlow.Value / 2f);
                     break;
                 case ShipState.Moving:
-                    ConsumeFuel(Ship.FuelFlow);
-                    ConsumeLifeSupport(Ship.LifeSupportFlow);
+                    ConsumeFuel(Ship.FuelFlow.Value);
+                    ConsumeLifeSupport(Ship.LifeSupportFlow.Value);
                     Move();
                     break;
                 case ShipState.Landing:
-                    ConsumeFuel(Ship.FuelFlow * 2f);
+                    ConsumeFuel(Ship.FuelFlow.Value * 2f);
                     Land();
                     break;
                 default:
@@ -64,7 +64,7 @@ namespace Game.Models
             if (_targetPlanet != null)
             {
                 var t = _targetPlanet.transform;
-                Ship.CurrentSpeed = Mathf.Clamp(Ship.CurrentSpeed + Ship.Acceleration, 0f, Ship.MaxMoveSpeed);
+                Ship.CurrentSpeed = Mathf.Clamp(Ship.CurrentSpeed + Ship.Acceleration.Value, 0f, Ship.MaxMoveSpeed.Value);
 
                 var dir = (t.position - transform.position).normalized;
                 var landingDistance = (t.position - transform.position).magnitude;
@@ -75,7 +75,7 @@ namespace Game.Models
                 }
 
                 transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.forward, dir,
-                    Ship.RotationSpeed * Time.deltaTime));
+                    Ship.RotationSpeed.Value * Time.deltaTime));
                 transform.position += transform.forward * Ship.CurrentSpeed * Time.deltaTime;
             }
         }
@@ -106,13 +106,13 @@ namespace Game.Models
 
         private void ConsumeFuel(float flow)
         {
-            if (Ship.Fuel < 0f)
+            if (Ship.Fuel.Value < 0f)
             {
                 return;
             }
 
-            Ship.Fuel = Mathf.Clamp(Ship.Fuel - flow * Time.deltaTime, 0f, float.MaxValue);
-            if (Ship.Fuel <= 0f)
+            Ship.Fuel.Value = Mathf.Clamp(Ship.Fuel.Value - flow * Time.deltaTime, 0f, float.MaxValue);
+            if (Ship.Fuel.Value <= 0f)
             {
                 RunOutOfFuelEvent?.Invoke();
             }
@@ -120,14 +120,14 @@ namespace Game.Models
 
         private void ConsumeLifeSupport(float flow)
         {
-            Ship.LifeSupport = Mathf.Clamp(Ship.LifeSupport - flow * Time.deltaTime, 0f, float.MaxValue);
+            Ship.LifeSupport.Value = Mathf.Clamp(Ship.LifeSupport.Value - flow * Time.deltaTime, 0f, float.MaxValue);
         }
 
         private void HarvestLifeSupport(float flow)
         {
             if (_targetPlanet != null)
             {
-                Ship.LifeSupport += _targetPlanet.Harvest(flow) * Time.deltaTime;
+                Ship.LifeSupport.Value += _targetPlanet.Harvest(flow) * Time.deltaTime;
             }
         }
     }

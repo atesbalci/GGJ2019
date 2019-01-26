@@ -1,4 +1,5 @@
 ﻿using System;
+using UniRx;
 
 namespace Game.Models
 {
@@ -11,18 +12,18 @@ namespace Game.Models
 
     public class Ship
     {
-        public float MaxMoveSpeed { get; private set; }
-        public float RotationSpeed { get; private set; }
-        public float Acceleration { get; private set; }
+        public FloatReactiveProperty MaxMoveSpeed { get; private set; }
+        public FloatReactiveProperty RotationSpeed { get; private set; }
+        public FloatReactiveProperty Acceleration { get; private set; }
 
-        public float MaxFuel { get; private set; }
-        public float MaxLifeSupport { get; private set; }
+        public FloatReactiveProperty MaxFuel { get; private set; }
+        public FloatReactiveProperty MaxLifeSupport { get; private set; }
 
-        public float FuelFlow { get; private set; }
-        public float LifeSupportFlow { get; private set; }
+        public FloatReactiveProperty FuelFlow { get; private set; }
+        public FloatReactiveProperty LifeSupportFlow { get; private set; }
 
-        public float Fuel { get; set; }
-        public float LifeSupport { get; set; }
+        public FloatReactiveProperty Fuel { get; set; }
+        public FloatReactiveProperty LifeSupport { get; set; }
 
         public float CurrentSpeed;
 
@@ -49,19 +50,19 @@ namespace Game.Models
             float fuelFlow,
             float lifeSupportFlow)
         {
-            MaxMoveSpeed = maxMoveSpeed;
-            RotationSpeed = rotationSpeed;
-            Acceleration = acceleration;
-            MaxFuel = maxFuel;
-            MaxLifeSupport = maxLifeSupport;
-            FuelFlow = fuelFlow;
-            LifeSupportFlow = lifeSupportFlow;
+            MaxMoveSpeed = new FloatReactiveProperty(maxMoveSpeed);
+            RotationSpeed = new FloatReactiveProperty(rotationSpeed);
+            Acceleration = new FloatReactiveProperty(acceleration);
+            MaxFuel = new FloatReactiveProperty(maxFuel);
+            MaxLifeSupport = new FloatReactiveProperty(maxLifeSupport);
+            FuelFlow = new FloatReactiveProperty(fuelFlow);
+            LifeSupportFlow = new FloatReactiveProperty(lifeSupportFlow);
         }
 
         public void FillConsumables()
         {
-            Fuel = MaxFuel;
-            LifeSupport = 0f;
+            Fuel = new FloatReactiveProperty(MaxFuel.Value);
+            LifeSupport = new FloatReactiveProperty(0f);
         }
     }
 
