@@ -17,15 +17,17 @@ namespace Game.Behaviours
         public void Bind(Planet planet)
         {
             Planet = planet;
+            SetParameters();
+        }
+
+        private void SetParameters()
+        {
             SetPlanet();
             SetView();
         }
 
         private void SetPlanet()
         {
-            Planet.Radius = Random.Range(0.5f, 3f); //test purpose
-            Planet.PlanetType =
-                Planet.PlanetColorMapping.Keys.ElementAt(Random.Range(0, Enum.GetNames(typeof(PlanetType)).Length - 1));
             Planet.LifeSupport = new FloatReactiveProperty(
                     Planet.PlanetType == PlanetType.LifeSupport ? Planet.Radius * LifeSupportCoeff : 0f);
             Planet.Fuel = new FloatReactiveProperty(

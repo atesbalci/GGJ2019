@@ -9,21 +9,21 @@ namespace Game.Behaviours
     {
         private SolarSystem _solarSystem;
         private PlanetBehaviour.Pool _planetPool;
-        private ICollection<PlanetBehaviour> _planets;
+        public ICollection<PlanetBehaviour> Planets { get; private set; }
 
         [Inject]
         public void Initialize(SolarSystem solarSystem, PlanetBehaviour.Pool planetPool)
         {
             _solarSystem = solarSystem;
             _planetPool = planetPool;
-            _planets = new LinkedList<PlanetBehaviour>();
+            Planets = new LinkedList<PlanetBehaviour>();
         }
 
         private void Update()
         {
             var center = transform.position;
             var time = Time.time;
-            foreach (var planetBehaviour in _planets)
+            foreach (var planetBehaviour in Planets)
             {
                 var orbit = planetBehaviour.Planet.Orbit;
                 var angle = (time * orbit.Speed) / (2 * orbit.Radius);
@@ -36,18 +36,18 @@ namespace Game.Behaviours
         {
             var planetBehaviour = _planetPool.Spawn();
             planetBehaviour.Bind(planet);
-            _planets.Add(planetBehaviour);
+            Planets.Add(planetBehaviour);
             _solarSystem.Planets.Add(planet);
         }
 
         public void ClearPlanets()
         {
-            foreach (var planet in _planets)
+            foreach (var planet in Planets)
             {
                 _planetPool.Despawn(planet);
             }
             _solarSystem.Planets.Clear();
-            _planets.Clear();
+            Planets.Clear();
         }
     }
 }

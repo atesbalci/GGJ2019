@@ -20,14 +20,13 @@ namespace Game.Models
             Ship = ship;
         }
         
-        //changed with planet later
-        private PlanetBehaviour _targetPlanet;
+        public  PlanetBehaviour TargetPlanet { get; private set; }
 
         public void SetTarget(PlanetBehaviour target)
         {
             if (Ship.State == ShipState.Idle)
             {
-                _targetPlanet = target;
+                TargetPlanet = target;
                 Ship.State = ShipState.Moving;
                 transform.SetParent(null);
             }
@@ -62,15 +61,15 @@ namespace Game.Models
 
         private void Move()
         {
-            if (_targetPlanet != null)
+            if (TargetPlanet != null)
             {
-                var t = _targetPlanet.transform;
+                var t = TargetPlanet.transform;
                 Ship.CurrentSpeed = Mathf.Clamp(Ship.CurrentSpeed + Ship.Acceleration.Value, 0f, Ship.MaxMoveSpeed.Value);
 
                 var dir = (t.position - transform.position).normalized;
                 var landingDistance = (t.position - transform.position).magnitude;
 
-                if (landingDistance < _targetPlanet.Planet.Radius + 1f && Ship.State != ShipState.Landing)
+                if (landingDistance < TargetPlanet.Planet.Radius + 1f && Ship.State != ShipState.Landing)
                 {
                     Ship.State = ShipState.Landing;
                 }
@@ -85,14 +84,14 @@ namespace Game.Models
         {
             if (sequence == null)
             {
-                var t = _targetPlanet.transform;
+                var t = TargetPlanet.transform;
                 var dir = (t.position - transform.position).normalized;
                 transform.SetParent(t.transform);
 
                 sequence = DOTween.Sequence();
                 sequence.Append(transform.DORotateQuaternion(Quaternion.LookRotation(-dir), 2f).SetEase(Ease.Linear));
                 sequence.Join(transform
-                    .DOLocalMove(_targetPlanet.Planet.Radius / 2f * _targetPlanet.transform.InverseTransformVector(-dir), 2f)
+                    .DOLocalMove(TargetPlanet.Planet.Radius / 2f * TargetPlanet.transform.InverseTransformVector(-dir), 2f)
                     .SetEase(Ease.Linear));
                 sequence.OnComplete(() =>
                 {
@@ -126,18 +125,18 @@ namespace Game.Models
 
         private void HarvestLifeSupport(float flow)
         {
-            if (_targetPlanet != null)
+            if (TargetPlanet != null)
             {
-                Ship.LifeSupport.Value += _targetPlanet.Harvest(_targetPlanet.Planet.LifeSupport ,flow) * Time.deltaTime;
+                Ship.LifeSupport.Value += TargetPlanet.Harvest(TargetPlanet.Planet.LifeSupport ,flow) * Time.deltaTime;
             }
         }
 
         private void HarvestFuel(float flow)
         {
-            if (_targetPlanet != null)
+            if (TargetPlanet != null)
             {
                 flow =  Mathf.Clamp(Ship.MaxFuel.Value - Ship.Fuel.Value, 0, flow);
-                Ship.Fuel.Value += _targetPlanet.Harvest(_targetPlanet.Planet.Fuel,  flow) * Time.deltaTime;
+                Ship.Fuel.Value += TargetPlanet.Harvest(TargetPlanet.Planet.Fuel,  flow) * Time.deltaTime;
             }
         }
     }

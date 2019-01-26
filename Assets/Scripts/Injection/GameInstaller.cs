@@ -1,4 +1,5 @@
 using Game.Behaviours;
+using Game.Controllers;
 using Game.Data;
 using Game.Models;
 using Game.Views;
@@ -24,6 +25,7 @@ namespace Injection
             Container.BindMemoryPool<OrbitView, OrbitView.Pool>().WithInitialSize(10)
                 .FromComponentInNewPrefab(OrbitViewPrefab).UnderTransform(OrbitViewsParent);
             Container.Bind<Ship>().AsSingle();
+            Container.Bind<LevelData>().AsSingle();
             Container.BindInstance(ShipBehaviour).AsSingle();
             Container.Bind<InteractionData>().AsSingle();
         }

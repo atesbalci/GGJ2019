@@ -12,13 +12,13 @@ namespace Game.Models
         {
             Orbits = new List<Orbit>();
             Planets = new LinkedList<Planet>();
-            InitializeOrbits();
+            InitializeOrbits(5);
         }
 
-        public void InitializeOrbits()
+        public void InitializeOrbits(int count)
         {
             Orbits.Clear();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < count; i++)
             {
                 Orbits.Add(new Orbit(2f * (Random.value > 0.5f ? 1f : -1f), 5 * (i + 1)));
             }
