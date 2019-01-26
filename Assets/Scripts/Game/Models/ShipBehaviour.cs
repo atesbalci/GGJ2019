@@ -60,11 +60,10 @@ namespace Game.Models
                 transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.forward, isLanding ? -dir : dir,
                     Model.RotationSpeed * Time.deltaTime));
 
-                transform.position += ( isLanding ? dir : transform.forward) *
-                                      ( isLanding ? Model.CurrentSpeed/2f : Model.CurrentSpeed ) * Time.deltaTime;
+                transform.position += ( isLanding ? dir : transform.forward) * Model.CurrentSpeed * Time.deltaTime;
 
                 //check is in range of the planet
-                if (landingDistance <= _targetPlanet.Planet.Radius)
+                if (landingDistance <= _targetPlanet.Planet.Radius/2f)
                 {
                     Debug.Log("Target Reached");
 
