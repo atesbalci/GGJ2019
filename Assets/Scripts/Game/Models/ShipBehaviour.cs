@@ -9,7 +9,6 @@ namespace Game.Models
     public class ShipBehaviour : MonoBehaviour
     {
         public Ship Ship;
-        public Transform Pivot;
         private Sequence sequence;
         public event Action TargetReached;
 
@@ -34,6 +33,31 @@ namespace Game.Models
 
         private void Update()
         {
+            switch (Ship.State)
+            {
+                case ShipState.Idle:
+                    ConsumeLifeSupport(Ship.LifeSupportFlow/2f);
+                    break;
+                case ShipState.Moving:
+                    ConsumeFuel(Ship.FuelFlow);
+                    ConsumeLifeSupport(Ship.LifeSupportFlow);
+                    Move();
+                    break;
+                case ShipState.Landing:
+                    ConsumeFuel(Ship.FuelFlow * 2f);
+                    Land();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            Debug.Log("Fuel: " + Ship.Fuel);
+            Debug.Log("Life Support: " + Ship.LifeSupport);
+
+        }
+
+        private void Move()
+        {
             if (_targetPlanet != null)
             {
                 var t = _targetPlanet.transform;
@@ -47,41 +71,33 @@ namespace Game.Models
                     Ship.State = ShipState.Landing;
                 }
 
-                switch (Ship.State)
+                transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.forward, dir,
+                    Ship.RotationSpeed * Time.deltaTime));
+                transform.position += transform.forward * Ship.CurrentSpeed * Time.deltaTime;
+            }
+        }
+
+        private void Land()
+        {
+            if (sequence == null)
+            {
+                var t = _targetPlanet.transform;
+                var dir = (t.position - transform.position).normalized;
+                transform.SetParent(t.transform);
+
+                sequence = DOTween.Sequence();
+                sequence.Append(transform.DORotateQuaternion(Quaternion.LookRotation(-dir), 2f).SetEase(Ease.Linear));
+                sequence.Join(transform
+                    .DOLocalMove(_targetPlanet.Planet.Radius / 2f * _targetPlanet.transform.InverseTransformVector(-dir), 2f)
+                    .SetEase(Ease.Linear));
+                sequence.OnComplete(() =>
                 {
-                    case ShipState.Idle:
-                        ConsumeLifeSupport(Ship.LifeSupportFlow/2f);
-                        break;
-                    case ShipState.Moving:
-                        ConsumeFuel(Ship.FuelFlow);
-                        ConsumeLifeSupport(Ship.LifeSupportFlow);
-
-                        transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.forward, dir, Ship.RotationSpeed * Time.deltaTime));
-                        transform.position += transform.forward * Ship.CurrentSpeed * Time.deltaTime;
-                        break;
-                    case ShipState.Landing:
-
-                        ConsumeFuel(Ship.FuelFlow * 2f);
-
-                        if (sequence == null)
-                        {
-                            sequence = DOTween.Sequence();
-                            transform.SetParent(_targetPlanet.transform);
-                            sequence.Append(transform.DORotateQuaternion(Quaternion.LookRotation(-dir), 2f).SetEase(Ease.Linear));
-                            sequence.Join(transform.DOLocalMove(_targetPlanet.Planet.Radius/2f * _targetPlanet.transform.InverseTransformVector(-dir), 2f).SetEase(Ease.Linear));
-                            sequence.OnComplete(() =>
-                            {
-                                _targetPlanet = null;
-                                Ship.State = ShipState.Idle;
-                                TargetReached?.Invoke();
-                                sequence.Kill();
-                                sequence = null;
-                            });
-                        }
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                    _targetPlanet = null;
+                    Ship.State = ShipState.Idle;
+                    TargetReached?.Invoke();
+                    sequence.Kill();
+                    sequence = null;
+                });
             }
         }
 
