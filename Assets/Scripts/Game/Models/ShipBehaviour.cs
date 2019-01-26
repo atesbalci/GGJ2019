@@ -8,15 +8,15 @@ namespace Game.Models
 {
     public class ShipBehaviour : MonoBehaviour
     {
-        public Ship Model;
+        public Ship Ship;
         public Transform Pivot;
         private Sequence sequence;
         public event Action TargetReached;
 
         [Inject]
-        private void Construct(Ship model)
+        private void Construct(Ship ship)
         {
-            Model = model;
+            Ship = ship;
         }
         
         //changed with planet later
@@ -24,10 +24,10 @@ namespace Game.Models
 
         public void SetTarget(PlanetBehaviour target)
         {
-            if (Model.State == ShipState.Idle)
+            if (Ship.State == ShipState.Idle)
             {
                 _targetPlanet = target;
-                Model.State = ShipState.Moving;
+                Ship.State = ShipState.Moving;
                 transform.SetParent(null);
             }
         }
@@ -37,28 +37,32 @@ namespace Game.Models
             if (_targetPlanet != null)
             {
                 var t = _targetPlanet.transform;
-                Model.CurrentSpeed = Mathf.Clamp(Model.CurrentSpeed + Model.Acceleration, 0f, Model.MaxMoveSpeed);
+                Ship.CurrentSpeed = Mathf.Clamp(Ship.CurrentSpeed + Ship.Acceleration, 0f, Ship.MaxMoveSpeed);
 
                 var dir = (t.position - transform.position).normalized;
                 var landingDistance = (t.position - transform.position).magnitude;
 
-                if (landingDistance < _targetPlanet.Planet.Radius + 1f && Model.State != ShipState.Landing)
+                if (landingDistance < _targetPlanet.Planet.Radius + 1f && Ship.State != ShipState.Landing)
                 {
-                    Model.State = ShipState.Landing;
+                    Ship.State = ShipState.Landing;
                 }
 
-                switch (Model.State)
+                switch (Ship.State)
                 {
                     case ShipState.Idle:
-                        //Life support consume
+                        ConsumeLifeSupport(Ship.LifeSupportFlow/2f);
                         break;
                     case ShipState.Moving:
-                        //Life support gain
-                        //Fuel consume
-                        transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.forward, dir, Model.RotationSpeed * Time.deltaTime));
-                        transform.position += transform.forward * Model.CurrentSpeed * Time.deltaTime;
+                        ConsumeFuel(Ship.FuelFlow);
+                        ConsumeLifeSupport(Ship.LifeSupportFlow);
+
+                        transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.forward, dir, Ship.RotationSpeed * Time.deltaTime));
+                        transform.position += transform.forward * Ship.CurrentSpeed * Time.deltaTime;
                         break;
                     case ShipState.Landing:
+
+                        ConsumeFuel(Ship.FuelFlow * 2f);
+
                         if (sequence == null)
                         {
                             sequence = DOTween.Sequence();
@@ -68,7 +72,7 @@ namespace Game.Models
                             sequence.OnComplete(() =>
                             {
                                 _targetPlanet = null;
-                                Model.State = ShipState.Idle;
+                                Ship.State = ShipState.Idle;
                                 TargetReached?.Invoke();
                                 sequence.Kill();
                                 sequence = null;
@@ -79,6 +83,16 @@ namespace Game.Models
                         throw new ArgumentOutOfRangeException();
                 }
             }
+        }
+
+        private void ConsumeFuel(float flow)
+        {
+            Ship.Fuel -= flow * Time.deltaTime;
+        }
+
+        private void ConsumeLifeSupport(float flow)
+        {
+            Ship.LifeSupport -= flow* Time.deltaTime;
         }
     }
 }

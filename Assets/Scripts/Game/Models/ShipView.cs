@@ -20,7 +20,7 @@ namespace Game.Models
         private void Awake()
         {
             _trailRenderer = GetComponentInChildren<TrailRenderer>();
-            _shipBehaviour.Model.OnStateChanged += state => { _trailRenderer.emitting = state != ShipState.Idle; };
+            _shipBehaviour.Ship.OnStateChanged += state => { _trailRenderer.emitting = state != ShipState.Idle; };
         }
     }
 }
