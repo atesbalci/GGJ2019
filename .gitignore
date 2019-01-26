@@ -49,5 +49,11 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
+
+# Rider
+.idea/
+Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll
+*JetBrains*
+
 *.DotSettings
 ProjectSettings/ProBuilderSettings.json
