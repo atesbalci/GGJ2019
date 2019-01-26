@@ -10,14 +10,17 @@ namespace Game.Controllers
     {
         private SolarSystemBehaviour _solarSystemBehaviour;
         private SolarSystem _solarSystem;
+        private Ship _ship;
 
         [Inject]
         public void Initialize(
             SolarSystemBehaviour solarSystemBehaviour,
-            SolarSystem solarSystem)
+            SolarSystem solarSystem,
+            Ship ship)
         {
             _solarSystemBehaviour = solarSystemBehaviour;
             _solarSystem = solarSystem;
+            _ship = ship;
             StartGame();
         }
 
@@ -29,6 +32,12 @@ namespace Game.Controllers
             {
                 var planet = new Planet(_solarSystem.Orbits.RandomElementRemove());
                 _solarSystemBehaviour.AddPlanet(planet);
+            }
+
+            if (_ship != null)
+            {
+                _ship.SetShipParameters(2f, 5f, 5f, 100, 100, 5f, 2f);
+                _ship.FillConsumables();
             }
         }
     }

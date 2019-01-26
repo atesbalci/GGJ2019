@@ -6,11 +6,11 @@ namespace Game.Models
     {
         public Orbit Orbit { get; }
         public float Radius;
+        public float LifeSupport;
 
         public Planet(Orbit orbit)
         {
             Orbit = orbit;
-            Radius = Random.Range(0.5f,3f); //test purpose
         }
     }
 }

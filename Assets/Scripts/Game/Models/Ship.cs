@@ -61,7 +61,7 @@ namespace Game.Models
         public void FillConsumables()
         {
             Fuel = MaxFuel;
-            LifeSupport = MaxLifeSupport;
+            LifeSupport = 0f;
         }
     }
 

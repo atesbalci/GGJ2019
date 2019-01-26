@@ -10,7 +10,9 @@ namespace Game.Models
     {
         public Ship Ship;
         private Sequence sequence;
-        public event Action TargetReached;
+
+        public event Action TargetReachedEvent;
+        public event Action RunOutOfFuelEvent;
 
         [Inject]
         private void Construct(Ship ship)
@@ -36,7 +38,8 @@ namespace Game.Models
             switch (Ship.State)
             {
                 case ShipState.Idle:
-                    ConsumeLifeSupport(Ship.LifeSupportFlow/2f);
+                    HarvestLifeSupport(5f);
+                    ConsumeLifeSupport(Ship.LifeSupportFlow / 2f);
                     break;
                 case ShipState.Moving:
                     ConsumeFuel(Ship.FuelFlow);
@@ -92,9 +95,9 @@ namespace Game.Models
                     .SetEase(Ease.Linear));
                 sequence.OnComplete(() =>
                 {
-                    _targetPlanet = null;
+                    //_targetPlanet = null;
                     Ship.State = ShipState.Idle;
-                    TargetReached?.Invoke();
+                    TargetReachedEvent?.Invoke();
                     sequence.Kill();
                     sequence = null;
                 });
@@ -103,12 +106,29 @@ namespace Game.Models
 
         private void ConsumeFuel(float flow)
         {
-            Ship.Fuel -= flow * Time.deltaTime;
+            if (Ship.Fuel < 0f)
+            {
+                return;
+            }
+
+            Ship.Fuel = Mathf.Clamp(Ship.Fuel - flow * Time.deltaTime, 0f, float.MaxValue);
+            if (Ship.Fuel <= 0f)
+            {
+                RunOutOfFuelEvent?.Invoke();
+            }
         }
 
         private void ConsumeLifeSupport(float flow)
         {
-            Ship.LifeSupport -= flow* Time.deltaTime;
+            Ship.LifeSupport = Mathf.Clamp(Ship.LifeSupport - flow * Time.deltaTime, 0f, float.MaxValue);
+        }
+
+        private void HarvestLifeSupport(float flow)
+        {
+            if (_targetPlanet != null)
+            {
+                Ship.LifeSupport += _targetPlanet.Harvest(flow) * Time.deltaTime;
+            }
         }
     }
 }
