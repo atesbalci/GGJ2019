@@ -13,7 +13,7 @@ namespace Game.Models
             Orbits = new List<Orbit>();
             for (int i = 0; i < 5; i++)
             {
-                Orbits.Add(new Orbit(100f * (Random.value > 0.5f ? 1f : -1f), 10 * (i + 1)));
+                Orbits.Add(new Orbit(10f * (Random.value > 0.5f ? 1f : -1f), 10 * (i + 1)));
             }
         }
     }

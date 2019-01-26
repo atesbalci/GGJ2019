@@ -7,14 +7,14 @@ namespace Game.Models
 {
     public class ShipBehaviour : MonoBehaviour
     {
-        private Ship _model;
+        public Ship Model;
 
         public event Action TargetReached;
 
         [Inject]
         private void Construct(Ship model)
         {
-            _model = model;
+            Model = model;
         }
         
         //changed with planet later
@@ -22,41 +22,48 @@ namespace Game.Models
 
         public void SetTarget(PlanetBehaviour target)
         {
-            if (_model.State == ShipState.Idle)
+            if (Model.State == ShipState.Idle)
             {
                 _targetPlanet = target;
-                _model.State = ShipState.Moving;
+                Model.State = ShipState.Moving;
+                transform.SetParent(null);
             }
         }
 
         private void Awake()
         {
-            _model.State = ShipState.Idle;  
+            Model.State = ShipState.Idle;  
         }
 
         private void Update()
         {
             if (_targetPlanet != null)
             {
-                //check is in range of the planet
                 var t = _targetPlanet.transform;
-                _model.CurrentSpeed = Mathf.Clamp(_model.CurrentSpeed + _model.Acceleration, 0f, _model.MaxMoveSpeed);
+                Model.CurrentSpeed = Mathf.Clamp(Model.CurrentSpeed + Model.Acceleration, 0f, Model.MaxMoveSpeed);
 
                 var dir = (t.position - transform.position).normalized;
-                var angleBetween = Vector3.Angle(transform.forward, dir);
 
-                var rot =  angleBetween >= _model.RotationSpeed ? _model.RotationSpeed : angleBetween;
-                rot *= Vector3.Dot(dir, transform.right)>0 ? 1 : -1;
-                transform.Rotate(Vector3.up,rot * Time.deltaTime);
+                #region Experimental Rotation
 
-                transform.position += transform.forward * _model.CurrentSpeed * Time.deltaTime;
+                //var angleBetween = Vector3.Angle(transform.forward, dir);
+                //var rot =  angleBetween >= Model.RotationSpeed ? Model.RotationSpeed : angleBetween;
+                //rot *= Vector3.Dot(dir, transform.right)>0 ? 1 : -1;
+                //transform.Rotate(Vector3.up,rot * Time.deltaTime);
 
-                if ((t.position - transform.position).magnitude < 0.1f)
+                #endregion
+
+                transform.rotation =  Quaternion.LookRotation(Vector3.Lerp(transform.forward, dir, Model.RotationSpeed * Time.deltaTime));
+                transform.position += transform.forward * Model.CurrentSpeed * Time.deltaTime;
+
+                //check is in range of the planet
+                if ((t.position - transform.position).magnitude < 0.25f)
                 {
                     Debug.Log("Target Reached");
 
+                    transform.SetParent(_targetPlanet.transform);
                     _targetPlanet = null;
-                    _model.State = ShipState.Idle;
+                    Model.State = ShipState.Idle;
                     TargetReached?.Invoke();
                 }
             }

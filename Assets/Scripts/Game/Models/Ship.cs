@@ -1,8 +1,9 @@
-﻿namespace Game.Models
+﻿using System;
+
+namespace Game.Models
 {
     public enum ShipState
     {
-        None,
         Idle,
         Moving
     }
@@ -14,8 +15,24 @@
         public float Acceleration { get; private set; }
 
         public float CurrentSpeed;
-        public ShipState State;
 
+        public event Action<ShipState> OnStateChanged;
+
+        private ShipState _state;
+
+        public ShipState State
+        {
+            get { return _state; }
+            set
+            {
+                if (value != _state)
+                {
+                    _state = value;
+                    OnStateChanged?.Invoke(_state);
+                }
+            }
+        }
+        
         public void SetValue(float maxMoveSpeed, float rotationSpeed, float acceleration)
         {
             MaxMoveSpeed = maxMoveSpeed;
