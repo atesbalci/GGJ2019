@@ -39,6 +39,7 @@ namespace Game.Models
             {
                 case ShipState.Idle:
                     HarvestLifeSupport(5f);
+                    HarvestFuel(5f);
                     ConsumeLifeSupport(Ship.LifeSupportFlow.Value / 2f);
                     break;
                 case ShipState.Moving:
@@ -127,7 +128,16 @@ namespace Game.Models
         {
             if (_targetPlanet != null)
             {
-                Ship.LifeSupport.Value += _targetPlanet.Harvest(flow) * Time.deltaTime;
+                Ship.LifeSupport.Value += _targetPlanet.Harvest(_targetPlanet.Planet.LifeSupport ,flow) * Time.deltaTime;
+            }
+        }
+
+        private void HarvestFuel(float flow)
+        {
+            if (_targetPlanet != null)
+            {
+                flow =  Mathf.Clamp(Ship.MaxFuel.Value - Ship.Fuel.Value, 0, flow);
+                Ship.Fuel.Value += _targetPlanet.Harvest(_targetPlanet.Planet.Fuel,  flow) * Time.deltaTime;
             }
         }
     }

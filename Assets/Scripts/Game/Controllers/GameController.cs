@@ -36,7 +36,7 @@ namespace Game.Controllers
 
             if (_ship != null)
             {
-                _ship.SetShipParameters(2f, 5f, 5f, 100, 100, 5f, 2f);
+                _ship.SetShipParameters(2f, 5f, 5f, 100, 100, 5f, 1f);
                 _ship.FillConsumables();
             }
         }
