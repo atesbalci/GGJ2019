@@ -1,4 +1,5 @@
-﻿using Game.Models;
+﻿using Game.Data;
+using Game.Models;
 using Game.Views;
 using UnityEngine;
 using Zenject;
@@ -9,37 +10,34 @@ namespace Game.Controllers
     {
         private ShipBehaviour _shipBehaviour;
         private Camera _camera;
-        private PlanetView _prevHighlitPlanet;
+        private InteractionData _interactionData;
 
         [Inject]
-        private void Construct(ShipBehaviour shipBehaviour)
+        private void Construct(ShipBehaviour shipBehaviour, InteractionData interactionData)
         {
             _shipBehaviour = shipBehaviour;
+            _interactionData = interactionData;
             _camera = Camera.main;
         }
 
         private void Update()
         {
-            var ray = _camera.ScreenPointToRay(UnityEngine.Input.mousePosition);
-            PlanetView planet = null;
+            var ray = _camera.ScreenPointToRay(Input.mousePosition);
+            PlanetView planetView = null;
             if (Physics.Raycast(ray, out var hit))
             {
-                planet = hit.transform.gameObject.GetComponent<PlanetView>();
-                if (planet != null)
+                planetView = hit.transform.gameObject.GetComponent<PlanetView>();
+                if (planetView != null)
                 {
-                    planet.IsUnderCursor = true;
-                    if (UnityEngine.Input.GetMouseButtonDown(0))
+                    planetView.IsUnderCursor = true;
+                    if (Input.GetMouseButtonDown(0))
                     {
-                        _shipBehaviour.SetTarget(planet.PlanetBehaviour);
+                        _shipBehaviour.SetTarget(planetView.PlanetBehaviour);
                     }
                 }
             }
 
-            if (planet != _prevHighlitPlanet && _prevHighlitPlanet)
-            {
-                _prevHighlitPlanet.IsUnderCursor = false;
-            }
-            _prevHighlitPlanet = planet;
+            _interactionData.CurrentlySelectedPlanet.Value = planetView;
         }
     }
 }

@@ -1,5 +1,6 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Helpers.Utility
 {
@@ -18,6 +19,15 @@ namespace Helpers.Utility
             var retVal = list[randomIndex];
             list.RemoveAt(randomIndex);
             return retVal;
+        }
+
+        public static void DisposeAndClear(this ICollection<IDisposable> disposables)
+        {
+            foreach (var disposable in disposables)
+            {
+                disposable.Dispose();
+            }
+            disposables.Clear();
         }
     }
 }

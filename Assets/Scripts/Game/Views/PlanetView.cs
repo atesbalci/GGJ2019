@@ -1,5 +1,8 @@
 using Game.Behaviours;
+using Game.Data;
+using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Game.Views
 {
@@ -10,9 +13,14 @@ namespace Game.Views
         [SerializeField] private Renderer _selection;
         private bool _isUnderCursor;
 
-        private void Awake()
+        [Inject]
+        public void Initialize(InteractionData interactionData)
         {
             PlanetBehaviour = GetComponent<PlanetBehaviour>();
+            interactionData.CurrentlySelectedPlanet.Subscribe(planet =>
+            {
+                IsUnderCursor = planet == this && gameObject.activeSelf;
+            }).AddTo(gameObject);
         }
 
         public bool IsUnderCursor

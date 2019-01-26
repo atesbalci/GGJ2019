@@ -1,4 +1,5 @@
 using Game.Behaviours;
+using Game.Data;
 using Game.Models;
 using Game.Views;
 using UnityEngine;
@@ -24,6 +25,7 @@ namespace Injection
                 .FromComponentInNewPrefab(OrbitViewPrefab).UnderTransform(OrbitViewsParent);
             Container.Bind<Ship>().AsSingle();
             Container.BindInstance(ShipBehaviour).AsSingle();
+            Container.Bind<InteractionData>().AsSingle();
         }
     }
 }
