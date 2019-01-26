@@ -11,7 +11,15 @@ namespace Game.Behaviours
         public void Bind(Planet planet)
         {
             Planet = planet;
+            SetView();
         }
+
+        //Maybe color set
+        private void SetView()
+        {
+            transform.localScale = Planet.Radius * Vector3.one;
+        }
+
         
         public class Factory : PlaceholderFactory<PlanetBehaviour> { }
     }

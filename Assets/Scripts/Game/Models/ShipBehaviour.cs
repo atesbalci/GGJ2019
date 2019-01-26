@@ -8,6 +8,7 @@ namespace Game.Models
     public class ShipBehaviour : MonoBehaviour
     {
         public Ship Model;
+        public Transform Pivot;
 
         public event Action TargetReached;
 
@@ -53,11 +54,17 @@ namespace Game.Models
 
                 #endregion
 
-                transform.rotation =  Quaternion.LookRotation(Vector3.Lerp(transform.forward, dir, Model.RotationSpeed * Time.deltaTime));
-                transform.position += transform.forward * Model.CurrentSpeed * Time.deltaTime;
+                var landingDistance = (t.position - transform.position).magnitude;
+                var isLanding = landingDistance < _targetPlanet.Planet.Radius * 1.5f;
+
+                transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.forward, isLanding ? -dir : dir,
+                    Model.RotationSpeed * Time.deltaTime));
+
+                transform.position += ( isLanding ? dir : transform.forward) *
+                                      ( isLanding ? Model.CurrentSpeed/2f : Model.CurrentSpeed ) * Time.deltaTime;
 
                 //check is in range of the planet
-                if ((t.position - transform.position).magnitude < 0.25f)
+                if (landingDistance <= _targetPlanet.Planet.Radius)
                 {
                     Debug.Log("Target Reached");
 

@@ -16,7 +16,7 @@ namespace Game
 
         private void Start()
         {
-           _ship.SetValue(10f,150f,5f);
+           _ship.SetValue(2f,10f,5f);
         }
     }
 }
