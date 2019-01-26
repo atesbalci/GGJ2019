@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Game.Behaviours;
+using UnityEngine;
 using Zenject;
 namespace Game.Models.Input
 {

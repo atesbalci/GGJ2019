@@ -24,8 +24,7 @@ namespace Game.Behaviours
             foreach (var planetBehaviour in _planets)
             {
                 var orbit = planetBehaviour.Planet.Orbit;
-                var angleRaw = time * orbit.Speed;
-                var angle = angleRaw - Mathf.Floor(angleRaw / 360f);
+                var angle = (time * orbit.Speed) / (2 * orbit.Radius);
                 planetBehaviour.transform.position = new Vector3(center.x + Mathf.Cos(angle) * orbit.Radius, 0f,
                     center.z + Mathf.Sin(angle) * orbit.Radius);
             }
