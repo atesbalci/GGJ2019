@@ -1,4 +1,5 @@
 ﻿using System;
+using DG.Tweening;
 using Game.Behaviours;
 using UnityEngine;
 using Zenject;
@@ -9,7 +10,7 @@ namespace Game.Models
     {
         public Ship Model;
         public Transform Pivot;
-
+        private Sequence sequence;
         public event Action TargetReached;
 
         [Inject]
@@ -31,11 +32,6 @@ namespace Game.Models
             }
         }
 
-        private void Awake()
-        {
-            Model.State = ShipState.Idle;  
-        }
-
         private void Update()
         {
             if (_targetPlanet != null)
@@ -44,33 +40,43 @@ namespace Game.Models
                 Model.CurrentSpeed = Mathf.Clamp(Model.CurrentSpeed + Model.Acceleration, 0f, Model.MaxMoveSpeed);
 
                 var dir = (t.position - transform.position).normalized;
-
-                #region Experimental Rotation
-
-                //var angleBetween = Vector3.Angle(transform.forward, dir);
-                //var rot =  angleBetween >= Model.RotationSpeed ? Model.RotationSpeed : angleBetween;
-                //rot *= Vector3.Dot(dir, transform.right)>0 ? 1 : -1;
-                //transform.Rotate(Vector3.up,rot * Time.deltaTime);
-
-                #endregion
-
                 var landingDistance = (t.position - transform.position).magnitude;
-                var isLanding = landingDistance < _targetPlanet.Planet.Radius * 1.5f;
 
-                transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.forward, isLanding ? -dir : dir,
-                    Model.RotationSpeed * Time.deltaTime));
-
-                transform.position += ( isLanding ? dir : transform.forward) * Model.CurrentSpeed * Time.deltaTime;
-
-                //check is in range of the planet
-                if (landingDistance <= _targetPlanet.Planet.Radius/2f)
+                if (landingDistance < _targetPlanet.Planet.Radius + 1f && Model.State != ShipState.Landing)
                 {
-                    Debug.Log("Target Reached");
+                    Model.State = ShipState.Landing;
+                }
 
-                    transform.SetParent(_targetPlanet.transform);
-                    _targetPlanet = null;
-                    Model.State = ShipState.Idle;
-                    TargetReached?.Invoke();
+                switch (Model.State)
+                {
+                    case ShipState.Idle:
+                        //Life support consume
+                        break;
+                    case ShipState.Moving:
+                        //Life support gain
+                        //Fuel consume
+                        transform.rotation = Quaternion.LookRotation(Vector3.Lerp(transform.forward, dir, Model.RotationSpeed * Time.deltaTime));
+                        transform.position += transform.forward * Model.CurrentSpeed * Time.deltaTime;
+                        break;
+                    case ShipState.Landing:
+                        if (sequence == null)
+                        {
+                            sequence = DOTween.Sequence();
+                            transform.SetParent(_targetPlanet.transform);
+                            sequence.Append(transform.DORotateQuaternion(Quaternion.LookRotation(-dir), 2f).SetEase(Ease.Linear));
+                            sequence.Join(transform.DOLocalMove(_targetPlanet.Planet.Radius/2f * _targetPlanet.transform.InverseTransformVector(-dir), 2f).SetEase(Ease.Linear));
+                            sequence.OnComplete(() =>
+                            {
+                                _targetPlanet = null;
+                                Model.State = ShipState.Idle;
+                                TargetReached?.Invoke();
+                                sequence.Kill();
+                                sequence = null;
+                            });
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }

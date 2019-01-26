@@ -184,6 +184,26 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1736653359}
+    - target: {fileID: 164039430427880262, guid: b88073e78e618404eb056378f4fdfe1c,
+        type: 3}
+      propertyPath: m_Parameters.widthMultiplier
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 164039430427880262, guid: b88073e78e618404eb056378f4fdfe1c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 164039430427880262, guid: b88073e78e618404eb056378f4fdfe1c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 164039430427880262, guid: b88073e78e618404eb056378f4fdfe1c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.b
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b88073e78e618404eb056378f4fdfe1c, type: 3}
 --- !u!1 &304824867
@@ -628,7 +648,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh33470
+  m_Name: pb_Mesh-85468
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
