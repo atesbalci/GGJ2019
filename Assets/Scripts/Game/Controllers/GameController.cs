@@ -111,7 +111,7 @@ namespace Game.Controllers
             if (ship != null)
             {
                 var upgrades = _levelData.Upgrades;
-                var moveSpeed = 2f + 0.2f * upgrades.MoveSpeed.Value;
+                var moveSpeed = 4f + 0.5f * upgrades.MoveSpeed.Value;
                 var maxFuel = 100f + 10f * upgrades.MaxFuel.Value;
                 var fuelFlow = 5f - 0.2f * upgrades.FuelEfficiency.Value;
                 var lifeSupportFlow = 1f - 0.075f * upgrades.LifeSupportEfficiency.Value;
@@ -127,9 +127,13 @@ namespace Game.Controllers
                 var planetBehaviour = _solarSystemBehaviour.Planets.FirstOrDefault(p => p.Planet == planet);
                 if (planetBehaviour != null)
                 {
-                    _shipBehaviour.transform.SetParent(planetBehaviour.transform);
-                    _shipBehaviour.transform.localPosition = new Vector3(0f,0f,0.5f);
-                    _shipBehaviour.transform.rotation = Quaternion.LookRotation(Vector3.forward);
+                    _shipBehaviour.TargetPlanet = planetBehaviour;
+                    var t = _shipBehaviour.transform;
+                    t.SetParent(null);
+                    t.localScale = Vector3.one * 0.75f;
+                    t.SetParent(planetBehaviour.transform);
+                    t.localPosition = new Vector3(0f,0f,0.5f);
+                    t.rotation = Quaternion.LookRotation(Vector3.forward);
                 }
             }
         }

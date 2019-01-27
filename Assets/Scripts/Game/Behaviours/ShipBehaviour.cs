@@ -20,7 +20,7 @@ namespace Game.Models
             Ship = ship;
         }
         
-        public  PlanetBehaviour TargetPlanet { get; private set; }
+        public  PlanetBehaviour TargetPlanet { get; set; }
 
         public void SetTarget(PlanetBehaviour target)
         {
