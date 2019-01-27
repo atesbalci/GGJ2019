@@ -12,7 +12,7 @@ namespace Game.Behaviours
     {
         public Planet Planet { get; private set; }
         public const float LifeSupportCoeff = 25f; //experimental
-        public const float Fuel = 15f; //experimental
+        public const float FuelCoeff = 15f; //experimental
 
         public void Bind(Planet planet)
         {
@@ -31,7 +31,7 @@ namespace Game.Behaviours
             Planet.LifeSupport = new FloatReactiveProperty(
                     Planet.PlanetType == PlanetType.LifeSupport ? Planet.Radius * LifeSupportCoeff : 0f);
             Planet.Fuel = new FloatReactiveProperty(
-                    Planet.PlanetType == PlanetType.Fuel ? Planet.Radius * Fuel : 0f);
+                    Planet.PlanetType == PlanetType.Fuel ? Planet.Radius * FuelCoeff : 0f);
         }
 
         public float Harvest(FloatReactiveProperty source, float flow)
@@ -40,6 +40,16 @@ namespace Game.Behaviours
             if (amount > 0f)
             {
                 source.Value -= amount * Time.deltaTime;
+            }
+
+            //todo: cache later
+            var r = GetComponent<Renderer>();
+            if (r != null)
+            {
+
+                var sourcePercentage = (Planet.LifeSupport.Value > 0 ? Planet.LifeSupport.Value : Planet.Fuel.Value) /
+                                       (Planet.Radius * (Planet.LifeSupport.Value > 0 ? LifeSupportCoeff : FuelCoeff));
+                r.material.color = Color.Lerp(Color.gray, Planet.PlanetColorMapping[Planet.PlanetType], sourcePercentage);
             }
 
             return amount;

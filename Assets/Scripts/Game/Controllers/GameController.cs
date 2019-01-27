@@ -26,6 +26,8 @@ namespace Game.Controllers
         private ShipBehaviour _shipBehaviour;
         private GameData _gameData;
 
+        private const float UpgradeCost = 100f;
+
         [Inject]
         public void Initialize(
             SolarSystemBehaviour solarSystemBehaviour,
@@ -51,7 +53,7 @@ namespace Game.Controllers
                 if (_shipBehaviour.Ship.LifeSupport.Value >= _gameData.RequiredLifeSupport)
                 {
                     var newScore = _shipBehaviour.Ship.Fuel.Value + _shipBehaviour.Ship.LifeSupport.Value;
-                    _gameData.RemainingUpgrades.Value += Mathf.FloorToInt(newScore/50f);
+                    _gameData.RemainingUpgrades.Value += Mathf.FloorToInt(newScore/UpgradeCost);
                     _gameData.Score += newScore;
                     _gameData.GameState = GameState.Successful;
                 }
