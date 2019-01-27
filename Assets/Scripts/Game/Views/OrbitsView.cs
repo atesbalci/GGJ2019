@@ -12,22 +12,22 @@ namespace Game.Views
     {
         private OrbitView.Pool _orbitViewPool;
         private SolarSystem _solarSystem;
-        private LevelData _levelData;
+        private GameData _gameData;
         private ICollection<OrbitView> _instantiatedOrbitViews;
 
         [Inject]
-        public void Initialize(OrbitView.Pool orbitViewPool, SolarSystem solarSystem, LevelData levelData)
+        public void Initialize(OrbitView.Pool orbitViewPool, SolarSystem solarSystem, GameData gameData)
         {
             _orbitViewPool = orbitViewPool;
             _solarSystem = solarSystem;
-            _levelData = levelData;
+            _gameData = gameData;
             _instantiatedOrbitViews = new LinkedList<OrbitView>();
         }
 
         private void Start()
         {
             RefreshOrbitViews();
-            _levelData.LevelChanged += RefreshOrbitViews;
+            _gameData.LevelChanged += RefreshOrbitViews;
         }
 
         private void RefreshOrbitViews()
@@ -47,7 +47,7 @@ namespace Game.Views
 
         private void OnDestroy()
         {
-            _levelData.LevelChanged -= RefreshOrbitViews;
+            _gameData.LevelChanged -= RefreshOrbitViews;
         }
     }
 }

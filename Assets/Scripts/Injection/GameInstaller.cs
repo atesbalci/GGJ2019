@@ -3,6 +3,7 @@ using Game.Controllers;
 using Game.Data;
 using Game.Models;
 using Game.Views;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -15,6 +16,7 @@ namespace Injection
         public GameObject PlanetPrefab;
         public GameObject OrbitViewPrefab;
         public ShipBehaviour ShipBehaviour;
+        public GameController GameController;
         
         public override void InstallBindings()
         {
@@ -25,8 +27,9 @@ namespace Injection
             Container.BindMemoryPool<OrbitView, OrbitView.Pool>().WithInitialSize(10)
                 .FromComponentInNewPrefab(OrbitViewPrefab).UnderTransform(OrbitViewsParent);
             Container.Bind<Ship>().AsSingle();
-            Container.Bind<LevelData>().AsSingle();
+            Container.Bind<GameData>().AsSingle().NonLazy();
             Container.BindInstance(ShipBehaviour).AsSingle();
+            Container.BindInstance(GameController).AsSingle();
             Container.Bind<InteractionData>().AsSingle();
         }
     }

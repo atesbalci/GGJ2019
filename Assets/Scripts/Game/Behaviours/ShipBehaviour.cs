@@ -37,7 +37,7 @@ namespace Game.Models
             switch (Ship.State)
             {
                 case ShipState.Idle:
-                    HarvestLifeSupport(5f);
+                    HarvestLifeSupport(10f);
                     HarvestFuel(5f);
                     ConsumeLifeSupport(Ship.LifeSupportFlow.Value / 2f);
                     break;
@@ -108,7 +108,7 @@ namespace Game.Models
 
         private void ConsumeFuel(float flow)
         {
-            if (Ship.Fuel.Value < 0f)
+            if (Ship.Fuel.Value <= 0f)
             {
                 return;
             }
