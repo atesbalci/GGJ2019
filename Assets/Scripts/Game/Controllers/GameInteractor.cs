@@ -40,13 +40,10 @@ namespace Game.Controllers
             }
             if (planetView != null)
             {
-                if (planetView != null)
+                planetView.IsUnderCursor = true;
+                if (Input.GetMouseButtonDown(0))
                 {
-                    planetView.IsUnderCursor = true;
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        _shipBehaviour.SetTarget(planetView.PlanetBehaviour);
-                    }
+                    _shipBehaviour.SetTarget(planetView.PlanetBehaviour);
                 }
             }
 
