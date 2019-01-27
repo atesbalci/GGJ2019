@@ -26,8 +26,11 @@ namespace Game.Views
             {
                 _addButton.onClick.AddListener(() =>
                 {
-                    source.Value++;
-                    gameData.RemainingUpgrades.Value--;
+                    if (gameData.RemainingUpgrades.Value > 0)
+                    {
+                        source.Value++;
+                        gameData.RemainingUpgrades.Value--;
+                    }
                 });
 
                 _removeButton.onClick.AddListener(() => { source.Value--; });

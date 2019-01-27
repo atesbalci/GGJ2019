@@ -51,13 +51,13 @@ namespace Game.Views
 
             _nextLevelButton.onClick.AddListener(() =>
             {
-                _gameController.Restart();
+                _gameController.LoadLevel(++_gameData.Level.Value);
                 gameObject.SetActive(false);
             });
 
             _restartButton.onClick.AddListener(() =>
             {
-                _gameController.LoadLevel(_gameData.Level.Value++);
+                _gameController.Restart();
                 gameObject.SetActive(false);
             });
 
