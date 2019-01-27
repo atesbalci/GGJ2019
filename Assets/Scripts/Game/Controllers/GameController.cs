@@ -40,9 +40,6 @@ namespace Game.Controllers
             _shipBehaviour = shipBehaviour;
             _gameData = gameData;
 
-            StartLevel();
-            _gameData.LevelChanged?.Invoke();
-
             _shipBehaviour.RunOutOfFuelEvent += () =>
             {
                 _gameData.Score += _shipBehaviour.Ship.LifeSupport.Value;
@@ -54,11 +51,19 @@ namespace Game.Controllers
                 if (_shipBehaviour.Ship.LifeSupport.Value >= _gameData.RequiredLifeSupport)
                 {
                     var newScore = _shipBehaviour.Ship.Fuel.Value + _shipBehaviour.Ship.LifeSupport.Value;
-                    _gameData.RemainingUpgrades.Value += Mathf.FloorToInt(newScore/UpgradeCost);
+                    _gameData.RemainingUpgrades.Value += Mathf.FloorToInt(newScore / UpgradeCost);
                     _gameData.Score += newScore;
                     _gameData.GameState = GameState.Successful;
                 }
             };
+
+            _gameData.GameState = GameState.Running;
+        }
+
+        private void Start()
+        {
+            StartLevel();
+            _gameData.LevelChanged?.Invoke();
         }
 
         private void StartLevel()
@@ -145,9 +150,9 @@ namespace Game.Controllers
 
                 ship.SetShipParameters(moveSpeed, 5f, 5f, maxFuel, 100, fuelFlow, lifeSupportFlow); //Set according to user data
                 ship.FillConsumables();
+                ship.State = ShipState.Idle;
             }
 
-            _shipBehaviour.Ship.State = ShipState.Idle;
             var planets = _solarSystem.Planets.OrderBy(p => p.Orbit.Radius).ToList();
             foreach (var planet in planets)
             {

@@ -26,9 +26,9 @@ namespace Injection
                 .FromComponentInNewPrefab(PlanetPrefab).UnderTransform(PlanetsParent);
             Container.BindMemoryPool<OrbitView, OrbitView.Pool>().WithInitialSize(10)
                 .FromComponentInNewPrefab(OrbitViewPrefab).UnderTransform(OrbitViewsParent);
-            Container.Bind<Ship>().AsSingle();
-            Container.Bind<GameData>().AsSingle().NonLazy();
-            Container.BindInstance(ShipBehaviour).AsSingle();
+            Container.Bind<Ship>().AsSingle().NonLazy();
+            Container.Bind<GameData>().AsSingle();
+            Container.BindInstance(ShipBehaviour).AsSingle().NonLazy();
             Container.BindInstance(GameController).AsSingle();
             Container.Bind<InteractionData>().AsSingle();
         }

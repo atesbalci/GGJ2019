@@ -55,10 +55,6 @@ namespace Game.Models
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            Debug.Log("Fuel: " + Ship.Fuel);
-            Debug.Log("Life Support: " + Ship.LifeSupport);
-
         }
 
         private void Move()
