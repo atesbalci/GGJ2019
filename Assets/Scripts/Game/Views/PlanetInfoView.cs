@@ -17,7 +17,8 @@ namespace Game.Views
         
         public PlanetView CurrentPlanet { get; private set; }
 
-        private TextMeshProUGUI _content;
+        [SerializeField] private TextMeshProUGUI _fuelText;
+        [SerializeField] private TextMeshProUGUI _resourcesText;
         private ICollection<IDisposable> _subscriptions;
         private Camera _camera;
         private RectTransform _canvas;
@@ -28,7 +29,6 @@ namespace Game.Views
         public void Initialize(InteractionData interactionData)
         {
             _subscriptions = new LinkedList<IDisposable>();
-            _content = GetComponentInChildren<TextMeshProUGUI>();
             _camera = Camera.main;
             _canvas = (RectTransform) GetComponentInParent<Canvas>().transform;
             interactionData.CurrentlySelectedPlanet.Subscribe(Show).AddTo(gameObject);
@@ -65,10 +65,8 @@ namespace Game.Views
         private void RefreshContent()
         {
             var planet = CurrentPlanet.PlanetBehaviour.Planet;
-            var builder = new StringBuilder();
-            builder.AppendLine("Resources: " + planet.LifeSupport.Value.ToString("n0"));
-            builder.AppendLine("Fuel: " + planet.Fuel.Value.ToString("n0"));
-            _content.text = builder.ToString();
+            _resourcesText.text = planet.LifeSupport.Value.ToString("n0");
+            _fuelText.text = planet.Fuel.Value.ToString("n0");
         }
 
         private void RefreshPosition()
@@ -81,7 +79,11 @@ namespace Game.Views
                                                CurrentPlanet.PlanetBehaviour.Planet.Radius * Vector3.right).x) *
                                       Vector2.one;
                 var canvasSize = _canvas.sizeDelta;
-                RectTransform.anchoredPosition = new Vector2(viewportPos.x * canvasSize.x, viewportPos.y * canvasSize.y);
+                var anchPos = new Vector2(viewportPos.x * canvasSize.x, viewportPos.y * canvasSize.y);
+                var size = RectTransform.sizeDelta;
+                anchPos.x = Mathf.Clamp(anchPos.x, 0f, canvasSize.x - size.x);
+                anchPos.y = Mathf.Clamp(anchPos.y, 0f, canvasSize.y - size.y);
+                RectTransform.anchoredPosition = anchPos;
             }
         }
     }

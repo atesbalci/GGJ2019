@@ -41,7 +41,20 @@ namespace Game.Models
                 }
             }
         }
-        
+
+        public Ship()
+        {
+            MaxMoveSpeed = new FloatReactiveProperty();
+            RotationSpeed = new FloatReactiveProperty();
+            Acceleration = new FloatReactiveProperty();
+            MaxFuel = new FloatReactiveProperty();
+            MaxLifeSupport = new FloatReactiveProperty();
+            FuelFlow = new FloatReactiveProperty();
+            LifeSupportFlow = new FloatReactiveProperty();
+            Fuel = new FloatReactiveProperty();
+            LifeSupport = new FloatReactiveProperty();
+        }
+
         public void SetShipParameters(float maxMoveSpeed,
             float rotationSpeed,
             float acceleration,
@@ -50,19 +63,19 @@ namespace Game.Models
             float fuelFlow,
             float lifeSupportFlow)
         {
-            MaxMoveSpeed = new FloatReactiveProperty(maxMoveSpeed);
-            RotationSpeed = new FloatReactiveProperty(rotationSpeed);
-            Acceleration = new FloatReactiveProperty(acceleration);
-            MaxFuel = new FloatReactiveProperty(maxFuel);
-            MaxLifeSupport = new FloatReactiveProperty(maxLifeSupport);
-            FuelFlow = new FloatReactiveProperty(fuelFlow);
-            LifeSupportFlow = new FloatReactiveProperty(lifeSupportFlow);
+            MaxMoveSpeed.Value = maxMoveSpeed;
+            RotationSpeed.Value = rotationSpeed;
+            Acceleration.Value = acceleration;
+            MaxFuel.Value = maxFuel;
+            MaxLifeSupport.Value = maxLifeSupport;
+            FuelFlow.Value = fuelFlow;
+            LifeSupportFlow.Value = lifeSupportFlow;
         }
 
         public void FillConsumables()
         {
-            Fuel = new FloatReactiveProperty(MaxFuel.Value);
-            LifeSupport = new FloatReactiveProperty(0f);
+            Fuel.Value = MaxFuel.Value;
+            LifeSupport.Value = 0f;
         }
     }
 
