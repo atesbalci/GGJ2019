@@ -24,7 +24,7 @@ namespace Game.Models
 
         public void SetTarget(PlanetBehaviour target)
         {
-            if (Ship.State == ShipState.Idle)
+            if (Ship.State == ShipState.Idle && target != TargetPlanet)
             {
                 TargetPlanet = target;
                 Ship.State = ShipState.Moving;

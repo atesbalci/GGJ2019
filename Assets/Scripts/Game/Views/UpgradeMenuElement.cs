@@ -19,22 +19,15 @@ namespace Game.Views
         private TMP_Text _descText;
 
         private IntReactiveProperty _source;
-        private GameData _gameData;
 
-        [Inject]
-        private void Construct(GameData gameData)
-        {
-            _gameData = gameData;
-        }
-
-        public void Bind(IntReactiveProperty source, string desc)
+        public void Bind(IntReactiveProperty source, string desc, GameData gameData)
         {
             if (source != null)
             {
                 _addButton.onClick.AddListener(() =>
                 {
                     source.Value++;
-                    _gameData.RemainingUpgrades.Value--;
+                    gameData.RemainingUpgrades.Value--;
                 });
 
                 _removeButton.onClick.AddListener(() => { source.Value--; });

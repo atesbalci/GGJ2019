@@ -78,7 +78,7 @@ namespace Game.Views
                 var element = button.GetComponent<UpgradeMenuElement>();
                 if (element != null)
                 {
-                    element.Bind(prop, desc);
+                    element.Bind(prop, desc,_gameData);
                 }
             }
         }

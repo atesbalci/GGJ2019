@@ -51,7 +51,7 @@ namespace Game.Controllers
                 if (_shipBehaviour.Ship.LifeSupport.Value >= _gameData.RequiredLifeSupport)
                 {
                     var newScore = _shipBehaviour.Ship.Fuel.Value + _shipBehaviour.Ship.LifeSupport.Value;
-                    _gameData.RemainingUpgrades.Value += Mathf.FloorToInt(newScore);
+                    _gameData.RemainingUpgrades.Value += Mathf.FloorToInt(newScore/50f);
                     _gameData.Score += newScore;
                     _gameData.GameState = GameState.Successful;
                 }
