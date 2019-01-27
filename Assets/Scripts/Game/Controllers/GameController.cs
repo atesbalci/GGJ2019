@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Behaviours;
@@ -6,6 +7,7 @@ using Helpers.Utility;
 using UniRx;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Game.Controllers
 {
@@ -43,9 +45,9 @@ namespace Game.Controllers
 
         private void SetLevel()
         {
-            _levelData.RequiredLifeSupport = _levelData.Level * 25 + 100f;
+            _levelData.RequiredLifeSupport = _levelData.Level.Value * 25 + 100f;
             _solarSystemBehaviour.ClearPlanets();
-            _solarSystem.InitializeOrbits(_levelData.Level + LevelData.InitialPlanetCount);
+            _solarSystem.InitializeOrbits(_levelData.Level.Value + LevelData.InitialPlanetCount);
         }
         
         /// <summary>
@@ -56,7 +58,7 @@ namespace Game.Controllers
         private void SetPlanets()
         {
             var planets = new List<Planet>();
-            for (var i = 0; i < LevelData.InitialPlanetCount + _levelData.Level - 1; i++)
+            for (var i = 0; i < LevelData.InitialPlanetCount + _levelData.Level.Value - 1; i++)
             {
                 planets.Add(new Planet(_solarSystem.Orbits.RandomElementRemove()));
             }
@@ -136,14 +138,25 @@ namespace Game.Controllers
         {
             if (_shipBehaviour.Ship.LifeSupport.Value >= _levelData.RequiredLifeSupport)
             {
-                //End level UI/ Load next Level on next button callback
-                //Set Next Level / Upgrades
+                ChangeLevel(_levelData.Level.Value++);
             }
         }
 
+        //End Game UI / Next
+        private void ChangeLevel(int level)
+        {
+            _levelData.Score += _shipBehaviour.Ship.Fuel.Value + _shipBehaviour.Ship.LifeSupport.Value;
+            _levelData.Level.Value = level;
+            StartLevel();
+            _levelData.LevelChanged?.Invoke();
+        }
+
+        //End Game UI/ Restart game
         private void RunOutOfFuel()
         {
-            //End Game UI/ Restart game
+            _levelData.Reset();
+            StartLevel();
+            _levelData.LevelChanged?.Invoke();
         }
     }
 
@@ -152,12 +165,21 @@ namespace Game.Controllers
         public const int InitialPlanetCount = 5;
 
         public float RequiredLifeSupport;
-        public int Score;
-        public int Level;
+        public float Score;
+        public IntReactiveProperty Level;
         public ShipUpgrades Upgrades;
+        public Action LevelChanged;
 
+        public void Reset()
+        {
+            Score = 0f;
+            Level.Value = 0;
+            Upgrades = new ShipUpgrades();
+        }
+         
         public LevelData()
         {
+            Level = new IntReactiveProperty(0);
             Upgrades = new ShipUpgrades();
         }
 

@@ -12,7 +12,7 @@ namespace Game.Behaviours
     {
         public Planet Planet { get; private set; }
         public const float LifeSupportCoeff = 25f; //experimental
-        public const float Fuel = 5f; //experimental
+        public const float Fuel = 15f; //experimental
 
         public void Bind(Planet planet)
         {

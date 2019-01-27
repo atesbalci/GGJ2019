@@ -95,11 +95,13 @@ namespace Game.Models
                     .SetEase(Ease.Linear));
                 sequence.OnComplete(() =>
                 {
-                    //_targetPlanet = null;
                     Ship.State = ShipState.Idle;
-                    TargetReachedEvent?.Invoke();
                     sequence.Kill();
                     sequence = null;
+                    if (TargetPlanet.Planet.PlanetType == PlanetType.Home)
+                    {
+                        TargetReachedEvent?.Invoke();
+                    }
                 });
             }
         }

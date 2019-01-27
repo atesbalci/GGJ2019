@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Game.Behaviours;
+using Game.Controllers;
 using Game.Models;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -10,19 +12,22 @@ namespace Game.Views
     {
         private OrbitView.Pool _orbitViewPool;
         private SolarSystem _solarSystem;
+        private LevelData _levelData;
         private ICollection<OrbitView> _instantiatedOrbitViews;
 
         [Inject]
-        public void Initialize(OrbitView.Pool orbitViewPool, SolarSystem solarSystem)
+        public void Initialize(OrbitView.Pool orbitViewPool, SolarSystem solarSystem, LevelData levelData)
         {
             _orbitViewPool = orbitViewPool;
             _solarSystem = solarSystem;
+            _levelData = levelData;
             _instantiatedOrbitViews = new LinkedList<OrbitView>();
         }
 
         private void Start()
         {
             RefreshOrbitViews();
+            _levelData.LevelChanged += RefreshOrbitViews;
         }
 
         private void RefreshOrbitViews()
@@ -38,6 +43,11 @@ namespace Game.Views
                 orbitView.Bind(planet.Orbit);
                 _instantiatedOrbitViews.Add(orbitView);
             }
+        }
+
+        private void OnDestroy()
+        {
+            _levelData.LevelChanged -= RefreshOrbitViews;
         }
     }
 }
