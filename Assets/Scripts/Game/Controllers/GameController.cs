@@ -41,6 +41,7 @@ namespace Game.Controllers
             _gameData = gameData;
 
             StartLevel();
+            _gameData.LevelChanged?.Invoke();
 
             _shipBehaviour.RunOutOfFuelEvent += () =>
             {

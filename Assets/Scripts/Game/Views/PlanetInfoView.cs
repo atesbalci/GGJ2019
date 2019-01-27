@@ -13,8 +13,6 @@ namespace Game.Views
 {
     public class PlanetInfoView : MonoBehaviour
     {
-        private static readonly Vector2 PixelOffset = new Vector2(5f, 5f);
-        
         public PlanetView CurrentPlanet { get; private set; }
 
         [SerializeField] private TextMeshProUGUI _fuelText;
