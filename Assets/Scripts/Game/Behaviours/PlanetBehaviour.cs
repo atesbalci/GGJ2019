@@ -46,10 +46,12 @@ namespace Game.Behaviours
             var r = GetComponent<Renderer>();
             if (r != null)
             {
-
-                var sourcePercentage = (Planet.LifeSupport.Value > 0 ? Planet.LifeSupport.Value : Planet.Fuel.Value) /
-                                       (Planet.Radius * (Planet.LifeSupport.Value > 0 ? LifeSupportCoeff : FuelCoeff));
-                r.material.color = Color.Lerp(Color.gray, Planet.PlanetColorMapping[Planet.PlanetType], sourcePercentage);
+                if (Planet.PlanetType != PlanetType.Home)
+                {
+                    var sourcePercentage = (Planet.LifeSupport.Value > 0 ? Planet.LifeSupport.Value : Planet.Fuel.Value) /
+                                           (Planet.Radius * (Planet.LifeSupport.Value > 0 ? LifeSupportCoeff : FuelCoeff));
+                    r.material.color = Color.Lerp(Color.gray, Planet.PlanetColorMapping[Planet.PlanetType], sourcePercentage);
+                }
             }
 
             return amount;

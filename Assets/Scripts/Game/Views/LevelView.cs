@@ -45,7 +45,7 @@ namespace Game.Views
                 _restartButton.gameObject.SetActive(!success);
                 _upgradeParent.gameObject.SetActive(success);
                 _gameOverParent.gameObject.SetActive(!success);
-                _scoreText.text = "Score: " + _gameData.Score;
+                _scoreText.text = "Score: " + _gameData.Score.ToString("N0");
                 gameObject.SetActive(true);
             };
 

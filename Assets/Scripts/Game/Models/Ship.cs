@@ -8,6 +8,7 @@ namespace Game.Models
         Idle,
         Moving,
         Landing,
+        OutOfGas,
     }
 
     public class Ship

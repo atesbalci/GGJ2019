@@ -50,6 +50,8 @@ namespace Game.Models
                     ConsumeFuel(Ship.FuelFlow.Value * 2f);
                     Land();
                     break;
+                case ShipState.OutOfGas:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -117,6 +119,7 @@ namespace Game.Models
             if (Ship.Fuel.Value <= 0f)
             {
                 RunOutOfFuelEvent?.Invoke();
+                Ship.State = ShipState.OutOfGas;
             }
         }
 
