@@ -71,7 +71,8 @@ namespace Game.Models
                 var dir = (t.position - transform.position).normalized;
                 var landingDistance = (t.position - transform.position).magnitude;
 
-                if (landingDistance < TargetPlanet.Planet.Radius + 1f && Ship.State != ShipState.Landing)
+                if (landingDistance < TargetPlanet.Planet.Radius + 1f && Ship.State != ShipState.Landing &&
+                    Ship.State != ShipState.OutOfGas)
                 {
                     Ship.State = ShipState.Landing;
                 }
